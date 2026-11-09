@@ -24,4 +24,3 @@ jwt:
 logging:
   level:
     root: WARN
-
