@@ -1,0 +1,25 @@
+4) Güvenlik / Performans / Yük altında davranış (özet)
+
+Stok yarış koşulu: reserveIfAvailable ve commitReservationToSold DB’de tek atomic UPDATE ile yapıldığı için yüksek yükte daha sağlam.
+
+Idempotency: idempotency_key ile tekrar eden “create order” istekleri güvenli.
+
+Check-in double usage: ticket_check_in üzerinde unique(ticket_id) ile aynı bilet iki kez okutulamaz.
+
+Fraud / QR: QR token’ı düz serial değil, hash tutuluyor (gerçekte HMAC + rotating secret öneririm).
+
+Süre aşımı: expires_at var; prod’da scheduler ile EXPIRED siparişlerin rezervini geri salmak gerekir (eklemeye hazır).
+
+Gözlemlenebilirlik: Global handler + standart ApiResponse; prod’da log sanitizer + trace id eklenir.
+
+5) Hangi pattern/mimari/prensipleri kullandık?
+
+Layered architecture (Controller → Service → Repository) + DTO ayrımı
+
+Repository Pattern (Spring Data)
+
+Transaction Script + ACID (stok/ödeme/ticket issue tek transaction)
+
+SOLID: Service’ler tek sorumlulukta (Order/Payment/CheckIn ayrıldı)
+
+Best practice DB: jsonb payload, index/unique, optimistic version alanları, timestamptz

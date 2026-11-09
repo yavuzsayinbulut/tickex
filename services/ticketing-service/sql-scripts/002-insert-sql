@@ -1,0 +1,31 @@
+-- ÖRNEK referans UUID'ler (event-service'ten gerçeklerini alıp değiştirebilirsin)
+-- sadece demo amaçlı
+DO $$
+DECLARE
+  v_event_id uuid := '11111111-1111-1111-1111-111111111111';
+  v_session_id uuid := '22222222-2222-2222-2222-222222222222';
+  t1 uuid;
+  t2 uuid;
+  t3 uuid;
+BEGIN
+  INSERT INTO ticket_type (event_id, event_session_id, code, name, description, currency, base_price, service_fee, refundable, status)
+  VALUES
+    (v_event_id, v_session_id, 'EARLY', 'Early Bird', 'Limited early bird tickets', 'TRY', 500.00, 25.00, true, 'ACTIVE')
+  RETURNING id INTO t1;
+
+  INSERT INTO ticket_type (event_id, event_session_id, code, name, description, currency, base_price, service_fee, refundable, status)
+  VALUES
+    (v_event_id, v_session_id, 'REG', 'Regular', 'Standard ticket', 'TRY', 750.00, 30.00, true, 'ACTIVE')
+  RETURNING id INTO t2;
+
+  INSERT INTO ticket_type (event_id, event_session_id, code, name, description, currency, base_price, service_fee, refundable, status)
+  VALUES
+    (v_event_id, v_session_id, 'VIP', 'VIP', 'VIP area access', 'TRY', 1500.00, 50.00, false, 'ACTIVE')
+  RETURNING id INTO t3;
+
+  INSERT INTO ticket_inventory (ticket_type_id, total_quantity) VALUES
+    (t1, 100),
+    (t2, 500),
+    (t3, 30);
+
+END $$;

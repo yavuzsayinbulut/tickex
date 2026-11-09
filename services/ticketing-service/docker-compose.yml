@@ -1,0 +1,45 @@
+services:
+  ticketing-postgres:
+    image: postgres:16
+    container_name: ticketing-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ticketing_db
+      POSTGRES_USER: ticketing_user
+      POSTGRES_PASSWORD: ${TICKETING_DB_PASSWORD:?TICKETING_DB_PASSWORD is required}
+      TZ: Europe/Istanbul
+    ports:
+      - "5436:5432"
+    volumes:
+      - ticketing-postgres-data:/var/lib/postgresql/data
+      - ./sql-scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./sql-scripts/002-insert-sql:/docker-entrypoint-initdb.d/002-insert.sql:ro
+    networks:
+      - ticketing-net
+
+  ticketing-adminer:
+    image: adminer:latest
+    container_name: ticketing-adminer
+    restart: unless-stopped
+    environment:
+      ADMINER_DEFAULT_SERVER: ticketing-postgres
+    ports:
+      - "8090:8080"
+    networks:
+      - ticketing-net
+
+  ticketing-redis:
+    image: redis:7-alpine
+    container_name: ticketing-redis
+    restart: unless-stopped
+    ports:
+      - "6381:6379"
+    networks:
+      - ticketing-net
+
+volumes:
+  ticketing-postgres-data:
+
+networks:
+  ticketing-net:
+    driver: bridge
