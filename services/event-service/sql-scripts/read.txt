@@ -1,0 +1,41 @@
+12. Hangi pattern, hangi mimari, hangi prensipler?
+
+Kısaca:
+
+Layered architecture:
+
+controller → service → repository
+
+DTO/Entity ayrımı: dış dünya DTO ile konuşuyor, DB ile Entity.
+
+DDD light / bounded context:
+
+Event-Service sadece “event/venue/session/tag” bounded context’ini yönetiyor.
+
+Stateless service:
+
+Tüm state DB’de, servis node’ları stateless.
+
+UUID ID’ler:
+
+Diğer servislerle entegrasyon, trace ve sharding için uygun.
+
+DTO vs Entity ayrımı:
+
+Entity’ler persistence için optimize,
+
+DTO’lar API kontratı için.
+
+Exception & validation:
+
+Bean Validation + GlobalExceptionHandler ile tutarlı hata cevapları.
+
+Ownership & role-based access:
+
+Domain level ownership check (organizerId),
+
+Framework level role check (Spring Security).
+
+Mapper’lar:
+
+Tek sorumluluk: entity ↔ DTO dönüşümleri (SRP).

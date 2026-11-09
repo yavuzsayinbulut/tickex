@@ -1,0 +1,35 @@
+services:
+  event-postgres:
+    image: postgres:16
+    container_name: event-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: event_db
+      POSTGRES_USER: event_user
+      POSTGRES_PASSWORD: ${EVENT_DB_PASSWORD:?EVENT_DB_PASSWORD is required}
+      TZ: Europe/Istanbul
+    ports:
+      - "5435:5432"
+    volumes:
+      - event-postgres-data:/var/lib/postgresql/data
+      - ./sql-scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - event-net
+
+  event-adminer:
+    image: adminer:latest
+    container_name: event-adminer
+    restart: unless-stopped
+    environment:
+      ADMINER_DEFAULT_SERVER: event-postgres
+    ports:
+      - "8089:8080"
+    networks:
+      - event-net
+
+volumes:
+  event-postgres-data:
+
+networks:
+  event-net:
+    driver: bridge
