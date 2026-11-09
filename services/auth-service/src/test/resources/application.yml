@@ -1,0 +1,27 @@
+debug: false
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:auth;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  liquibase:
+    enabled: false
+
+jwt:
+  issuer: tickex-test
+  access-token:
+    secret: test-only-access-signing-key-32-bytes
+    expiration-minutes: 15
+  refresh-token:
+    secret: test-only-refresh-signing-key-32-bytes
+    expiration-days: 7
+
+logging:
+  level:
+    root: WARN
+

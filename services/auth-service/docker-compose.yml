@@ -1,0 +1,36 @@
+services:
+  auth-postgres:
+    image: postgres:16
+    container_name: auth-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: auth_db
+      POSTGRES_USER: auth_user
+      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD:?AUTH_DB_PASSWORD is required}
+      TZ: Europe/Istanbul
+    ports:
+      - "5433:5432"
+    volumes:
+      - auth-postgres-data:/var/lib/postgresql/data
+      - ./sql-scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - auth-net
+
+  auth-adminer:
+    image: adminer:latest
+    container_name: auth-adminer
+    restart: unless-stopped
+    environment:
+      ADMINER_DEFAULT_SERVER: auth-postgres
+    ports:
+      - "8088:8080"
+    networks:
+      - auth-net
+
+volumes:
+  auth-postgres-data:
+
+networks:
+  auth-net:
+    driver: bridge
+
